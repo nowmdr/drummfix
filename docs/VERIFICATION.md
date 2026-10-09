@@ -1,33 +1,15 @@
-# Проверки DrummFix 0.2.1
+# DrummFix verification
 
-Дата: 8 октября 2026. Компьютер пользователя: Apple M1 Pro, macOS 26.6.2.
-Обновление: 9 октября 2026. Пользователь сообщил, что исправление работает после добавления настройки динамики; версия 0.2.1 получила иконку приложения.
+Hardware check: Alesis Turbo Mesh via USB, MacBook Pro M1 Pro, macOS 26.6.2, GarageBand 10.4.14. The user confirmed that holding the pedal and striking the hi-hat produces the correct closed sound in GarageBand. A GarageBand recording showed closed note 42 and open note 46, with different recorded velocities on closed hits (64, 41, and 48 in the inspected passage). How audible those differences are depends on the selected GarageBand kit.
 
-## Выполнено
+The following checks passed for the 0.2.1 MIDI implementation:
 
-- Семь сценариев преобразования: фактическая последовательность открытого/закрытого хай-хэта; смена педали между Note On и Note Off; Note On с velocity 0; сохранение velocity и повторные удары; неизменность других пэдов, каналов, Aftertouch и SysEx; неизвестное состояние, сброс и независимость UMP-групп; режимы динамики.
-- CoreMIDI loopback: виртуальный источник → настоящий callback входного порта → преобразование → виртуальный выход → настоящий callback наблюдателя. Все события совпали с ожидаемыми; исходные timestamps сохранены.
-- Проверка тишины: вход продолжается, но события инструмента не передаются на выход; изоляция сохраняется.
-- Пакет из 1024 UMP-слов прошёл без усечения.
-- Изоляция реального `Alesis Turbo`: отдельный свежий процесс CoreMIDI не видит исходный порт после установки kMIDIPropertyPrivate. После восстановления порт снова виден.
-- Проверка аварии на реальном Alesis: тестовый процесс с активной изоляцией завершён SIGKILL; отдельный DrummFixGuard восстановил исходный порт. В последующей независимой проверке Alesis видим и private=false.
-- Во время синтетического debug loopback среднее время callback было 0.126 мс, максимум 0.170 мс. Это не измерение полной задержки звука и не гарантия задержки при любой нагрузке.
-- Собрана локальная release-сборка arm64. Семь сценариев преобразования и CoreMIDI loopback прошли также в release; время callback в прогоне версии 0.2.0: среднее 0.024 мс, максимум 0.050 мс. Проверка ad-hoc подписи `codesign --verify --deep --strict` прошла.
-- Интерфейс запущенного приложения проверен визуально в обычном виде и с раскрытой диагностикой: элементы доступны, подписи помещаются.
-- При активном DrummFix отдельный процесс видит виртуальный выход DrummFix и GarageBand Virtual Out; аппаратный Alesis подключён, имеет private=true и отсутствует среди публичных источников.
-- На живой игре пользователя счётчик исправлений превысил 100. В журнале видны CC4/127, пары Note On/Off 46 → 42 с разной силой удара; ноты других пэдов 36 и 38 проходят без изменения. Это подтверждает преобразование реального входа, но само по себе не подтверждает результат на слух.
-- GarageBand повторно открыт после активации исправления. Тестовый проект в `docs/DrummFix Test 2026-10-08.band` сохранён с текущим набором Smash.
-- Пользователь подтвердил, что при удержании педали и ударе закрытый хай-хэт теперь звучит правильно. Он сообщил, что сила удара на слух не определяется. В журнале видна разная исходная MIDI-скорость; преобразование первоначальной версии сохраняло её без изменения. Для диагностики и настройки добавлено сравнение контрольных нот 42 с velocity 20/110 и три режима динамики закрытого хай-хэта. Их результат на слух ещё требует проверки.
-- Седьмой сценарий проверяет монотонность и граничные значения двух кривых чувствительности, применение к закрытой ноте 42 и неизменность открытого хай-хэта/других пэдов. Debug и release тесты прошли.
-- Версия 0.2.1: в пакет добавлена иконка `.icns` всех стандартных размеров, созданная по изображению пользователя. Проверены `CFBundleIconFile`, размер ресурса и целостность подписи пакета. Сообщение о запуске теперь не привязано к одному набору GarageBand.
-- Записан и сохранён реальный фрагмент в тестовом проекте GarageBand с набором Smash. В Piano Roll видны закрытые удары F♯1 (MIDI 42), открытые A♯1 (46) и остальные пэды. У трёх проверенных закрытых нот GarageBand показывает разные velocity: 64, 41 и 48. На просмотренном участке по одной ноте на момент удара. Проверка подтверждает передачу динамики в запись, но не устанавливает, насколько слышима разница в этом наборе.
+- Seven transformation scenarios cover open/closed hi-hat, pedal changes between Note On and Note Off, zero-velocity Note On, repeated hits, other pads/channels/Aftertouch/SysEx, unknown state and UMP groups, and dynamics curves.
+- A CoreMIDI loopback covered input callback, conversion, virtual output, event contents, and timestamps. Silence test emitted no fixture events; a 1,024-word packet was not truncated.
+- The real Alesis input was hidden while the fix ran and visible again afterward. A separate DrummFixGuard process restored it after a forced `SIGKILL` of the main process.
+- Release-build tests and `codesign --verify --deep --strict` passed. A synthetic release-loopback run measured mean callback processing at 0.024 ms and max at 0.050 ms. This is not end-to-end audio latency.
+- The user's live playing produced more than 100 corrected hits. The observed trace contained CC4/127 and paired Note On/Off conversions 46 → 42, while other pad notes passed through unchanged.
 
-## Нужно проверить с пользователем
+Version 0.2.2 changes English UI strings and public documentation; the MIDI transformation itself is unchanged. Its build, automated MIDI checks, disk-image integrity, and local app launch were verified on the same Mac.
 
-- Сравнение тихой/сильной контрольных нот и режимов чувствительности в используемом наборе GarageBand; при последнем осмотре проекта был выбран Smash.
-- Проверка тишины в самом GarageBand после запуска в правильном порядке: отсутствие прямого обходного потока.
-- Прослушивание сохранённой записи и более широкая проверка отсутствия двойных нот.
-- Все реальные пэды, быстрое переключение педали и динамика.
-- Физическое отключение/подключение USB и сон/пробуждение Mac. Программа требует закрыть GarageBand перед безопасным переподключением.
-
-Эти проверки нельзя считать пройденными только на основании автоматического MIDI-теста.
+Still to test on separate hardware: clean installation and Gatekeeper flow; macOS 14; USB unplug/replug and sleep/wake with GarageBand; Intel support; other kits and DAWs. A passing loopback test does not establish those behaviors.

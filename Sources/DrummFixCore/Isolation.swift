@@ -29,10 +29,10 @@ public final class SessionLock {
     public init(directory: URL = DrummFixPaths.support) throws {
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         descriptor = open(directory.appendingPathComponent("session.lock").path, O_CREAT | O_RDWR | O_CLOEXEC, 0o600)
-        guard descriptor >= 0 else { throw RouteFailure("Не удалось открыть файл сессии DrummFix.") }
+        guard descriptor >= 0 else { throw RouteFailure("Could not open the DrummFix session file.") }
         guard flock(descriptor, LOCK_EX | LOCK_NB) == 0 else {
             close(descriptor)
-            throw RouteFailure("DrummFix уже запущен. Открой существующее окно приложения.")
+            throw RouteFailure("DrummFix is already running. Open its existing window.")
         }
     }
     deinit { flock(descriptor, LOCK_UN); close(descriptor) }
@@ -52,9 +52,9 @@ public func restoreIsolation(journal: URL = DrummFixPaths.recovery) throws -> Bo
         status = midiInteger(source.endpoint, kMIDIPropertyPrivate) == nil
             ? noErr : MIDIObjectRemoveProperty(source.endpoint, kMIDIPropertyPrivate)
     }
-    try midiCheck(status, "Восстановление MIDI-входа")
+    try midiCheck(status, "Restore MIDI input")
     guard midiInteger(source.endpoint, kMIDIPropertyPrivate) != 1 else {
-        throw RouteFailure("MIDI-вход ещё скрыт. Перезапусти DrummFix для восстановления.")
+        throw RouteFailure("MIDI input is still hidden. Restart DrummFix to restore it.")
     }
     try FileManager.default.removeItem(at: journal)
     return true
@@ -69,10 +69,10 @@ public final class IsolationLease {
     public init(journal: URL = DrummFixPaths.recovery) { self.journal = journal }
 
     public func acquire(_ source: MIDISourceInfo, helper: URL) throws {
-        guard self.source == nil else { throw RouteFailure("Маршрут уже включён.") }
-        guard !source.isPrivate, !source.isOffline else { throw RouteFailure("MIDI-вход занят другим приложением или отключён.") }
+        guard self.source == nil else { throw RouteFailure("The MIDI route is already active.") }
+        guard !source.isPrivate, !source.isOffline else { throw RouteFailure("MIDI input is in use or disconnected.") }
         guard !FileManager.default.fileExists(atPath: journal.path) else {
-            throw RouteFailure("Сначала нужно восстановить предыдущий MIDI-маршрут.")
+            throw RouteFailure("Restore the previous MIDI route first.")
         }
         let record = RecoveryRecord(id: source.id, name: source.name, previousPrivate: midiInteger(source.endpoint, kMIDIPropertyPrivate))
         try FileManager.default.createDirectory(at: journal.deletingLastPathComponent(), withIntermediateDirectories: true)
@@ -97,11 +97,11 @@ public final class IsolationLease {
             let available = poll(&descriptor, 1, 3000)
             guard available > 0,
                   String(data: ready.fileHandleForReading.readData(ofLength: 6), encoding: .utf8) == "READY\n" else {
-                throw RouteFailure("Защита восстановления не запустилась. MIDI-вход не изменён.")
+                throw RouteFailure("The recovery helper did not start. MIDI input was not changed.")
             }
             ready.fileHandleForReading.closeFile()
-            try midiCheck(MIDIObjectSetIntegerProperty(source.endpoint, kMIDIPropertyPrivate, 1), "Изоляция исходного MIDI-входа")
-            guard midiInteger(source.endpoint, kMIDIPropertyPrivate) == 1 else { throw RouteFailure("Не удалось изолировать MIDI-вход.") }
+            try midiCheck(MIDIObjectSetIntegerProperty(source.endpoint, kMIDIPropertyPrivate, 1), "Isolate original MIDI input")
+            guard midiInteger(source.endpoint, kMIDIPropertyPrivate) == 1 else { throw RouteFailure("Could not isolate MIDI input.") }
 
             let verifier = Process()
             verifier.executableURL = helper
@@ -111,7 +111,7 @@ public final class IsolationLease {
             try verifier.run()
             verifier.waitUntilExit()
             guard verifier.terminationStatus == 1 else {
-                throw RouteFailure("Другие приложения всё ещё видят исходный MIDI-вход. Исправление не включено.")
+                throw RouteFailure("Other apps can still see the original MIDI input. The fix was not enabled.")
             }
         } catch {
             try? release()

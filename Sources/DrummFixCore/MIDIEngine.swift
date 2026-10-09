@@ -49,7 +49,7 @@ public final class MIDIEngine {
             if kind == .msgObjectAdded || kind == .msgObjectRemoved || kind == .msgSetupChanged || kind == .msgIOError {
                 DispatchQueue.main.async { [weak self] in self?.onTopologyChange?() }
             }
-        }, "Создание MIDI-клиента")
+        }, "Create MIDI client")
         traces.reserveCapacity(256)
     }
 
@@ -58,10 +58,10 @@ public final class MIDIEngine {
     public func start(source: MIDISourceInfo, helper: URL) throws {
         guard connectedSource == nil else { return }
         guard try restoreIsolation(journal: journal) else {
-            throw RouteFailure("Подключи прежнее устройство Alesis, чтобы восстановить его MIDI-вход.")
+            throw RouteFailure("Reconnect the previous Alesis device to restore its MIDI input.")
         }
         do {
-            try midiCheck(MIDISourceCreateWithProtocol(client, "DrummFix — Alesis Turbo" as CFString, ._1_0, &output), "Создание выхода")
+            try midiCheck(MIDISourceCreateWithProtocol(client, "DrummFix — Alesis Turbo" as CFString, ._1_0, &output), "Create MIDI output")
             MIDIObjectSetStringProperty(output, kMIDIPropertyManufacturer, "DrummFix" as CFString)
             MIDIObjectSetStringProperty(output, kMIDIPropertyModel, "Alesis Turbo Hi-Hat Fix" as CFString)
             MIDIObjectSetStringProperty(output, kMIDIPropertyDisplayName, "DrummFix — Alesis Turbo" as CFString)
@@ -72,8 +72,8 @@ public final class MIDIEngine {
             if let id = midiInteger(output, kMIDIPropertyUniqueID) { defaults.set(Int(id), forKey: "outputUID") }
             try midiCheck(MIDIInputPortCreateWithProtocol(client, "Alesis Input" as CFString, ._1_0, &inputPort) { [weak self] list, _ in
                 self?.receive(list)
-            }, "Создание входа")
-            try midiCheck(MIDIPortConnectSource(inputPort, source.endpoint, nil), "Подключение Alesis")
+            }, "Create MIDI input")
+            try midiCheck(MIDIPortConnectSource(inputPort, source.endpoint, nil), "Connect Alesis")
             connectedSource = source
             // Connect before hiding; other clients started afterwards only see our output.
             try lease.acquire(source, helper: helper)
@@ -142,7 +142,7 @@ public final class MIDIEngine {
             let converted = transformer.transform(words)
             if !muted {
                 let status = publishMIDI(output, timestamp: timestamp, words: converted)
-                if status != noErr { error = "Ошибка передачи MIDI: \(status)" }
+                if status != noErr { error = "MIDI transmission error: \(status)" }
             }
             // Bounded diagnostic history. All formatting happens on the UI thread.
             var index = 0

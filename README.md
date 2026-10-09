@@ -1,48 +1,48 @@
 # DrummFix
 
-<img src="assets/DrummFixIcon.png" width="96" alt="Иконка DrummFix">
+<img src="assets/DrummFixIcon.png" width="96" alt="DrummFix icon">
 
-DrummFix исправляет закрытый хай-хэт **Alesis Turbo Mesh** при игре в **GarageBand** на Mac. Если при нажатой педали удар по хай-хэту звучит открытым, приложение считывает состояние педали из MIDI-сигнала и передаёт в GarageBand правильную ноту закрытого хай-хэта. Остальные пэды и отдельный звук закрытия педали проходят без изменений.
+DrummFix fixes the closed hi-hat on an **Alesis Turbo Mesh** kit when playing **GarageBand** on a Mac. When the pedal is held down, the kit sends a hi-hat hit as MIDI note 46. DrummFix uses the pedal's CC4 value to send note 42 for that hit. Open hi-hat hits, pedal-only sounds, and other pads pass through unchanged.
 
-Приложение работает локально. Учётная запись и доступ к сети не нужны.
+DrummFix runs locally. It needs no account or network access.
 
-## Скачать и установить
+## Download
 
-**[Скачать DrummFix 0.2.1 для Mac с Apple Silicon (.dmg)](https://github.com/nowmdr/drummfix/releases/download/v0.2.1-beta.1/DrummFix-0.2.1-macOS-arm64.dmg)** · [Все выпуски](https://github.com/nowmdr/drummfix/releases)
+**[Download DrummFix 0.2.2 beta 2 for Apple Silicon (.dmg)](https://github.com/nowmdr/drummfix/releases/download/v0.2.2-beta.2/DrummFix-0.2.2-macOS-arm64.dmg)** · [All releases](https://github.com/nowmdr/drummfix/releases)
 
-Откройте `.dmg` и перетащите `DrummFix.app` в `Applications` («Программы»). Это предварительная сборка: она подписана локально, **пока не подписана Developer ID и не нотарифицирована Apple**. При первом запуске macOS может заблокировать её. Если вы доверяете скачанному файлу, попробуйте открыть приложение, затем в **Системные настройки → Конфиденциальность и безопасность** выберите **Открыть всё равно**. [Инструкция Apple](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac). Мы не просим отключать Gatekeeper.
+Open the `.dmg` and drag `DrummFix.app` into **Applications**. This beta is ad-hoc signed, but **not yet signed with an Apple Developer ID or notarized**. macOS may block its first launch. If you trust the download, try opening it, then use **System Settings → Privacy & Security → Open Anyway**. See [Apple's instructions](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac). You do not need to disable Gatekeeper.
 
-Из терминала тот же файл можно получить через GitHub CLI:
+You can also download the disk image with GitHub CLI:
 
 ```sh
-gh release download v0.2.1-beta.1 -R nowmdr/drummfix -p '*.dmg'
+gh release download v0.2.2-beta.2 -R nowmdr/drummfix -p '*.dmg'
 ```
 
-Альтернативный способ — [собрать приложение из исходников](#сборка-из-исходников). Homebrew-пакета сейчас нет.
+Or [build the app from source](#build-from-source). A Homebrew package is not available yet.
 
-## Начать играть
+## Get started
 
-1. Подключите Alesis Turbo Mesh к Mac по USB и включите модуль.
-2. Сохраните проект GarageBand и полностью закройте GarageBand через `⌘Q`.
-3. Запустите DrummFix, выберите **Alesis Turbo** и нажмите **«Включить исправление»**.
-4. Нажмите **«Открыть GarageBand»**. Выберите дорожку Software Instrument → Drum Kit и нужный набор.
-5. Держите DrummFix открытым во время игры и записи.
+1. Connect and power on your Alesis Turbo Mesh via USB.
+2. Save your GarageBand project and quit GarageBand completely with `⌘Q`.
+3. Open DrummFix, select **Alesis Turbo**, and click **Enable fix**.
+4. Click **Open GarageBand**. Select a Software Instrument → Drum Kit track and your preferred kit.
+5. Keep DrummFix open while playing and recording.
 
-Проверьте три состояния: отпущенная педаль + удар — открытый хай-хэт; зажатая педаль + удар — закрытый; нажатие педали без удара — обычный звук педали. Для закрытых ударов можно выбрать режим динамики «Исходная», «Умеренная» или «Сильная».
+Quick check: an open pedal should produce an open hi-hat; a held-down pedal plus a pad hit should produce a closed hi-hat; pressing the pedal without hitting the pad should keep its normal pedal sound. You can adjust closed hi-hat dynamics with the Original, Moderate, and Strong modes.
 
-Полная инструкция, диагностика, действия после отключения USB и восстановление обычного MIDI-входа — в [руководстве](docs/USER_GUIDE.md).
+For diagnostics, USB reconnection, and restoring the original MIDI route, see the [user guide](docs/USER_GUIDE.md).
 
-## Совместимость
+## Compatibility
 
-- Проверено: Alesis Turbo Mesh по USB, MacBook Pro M1 Pro, macOS 26.6.2, GarageBand 10.4.14.
-- Сборка предназначена для **Apple Silicon (arm64)**. Минимальная версия в пакете — macOS 14; на macOS 14 и Intel приложение пока не проверялось.
-- Другие модели барабанов и приложения не тестировались.
+- Tested with Alesis Turbo Mesh over USB on a MacBook Pro M1 Pro, macOS 26.6.2, and GarageBand 10.4.14.
+- The downloadable build is for **Apple Silicon (arm64)**. Its declared minimum is macOS 14, but macOS 14 has not been tested. Intel Macs have not been tested or packaged.
+- Other drum kits and DAWs have not been tested.
 
-DrummFix — независимая утилита. Она не связана с Alesis или Apple.
+DrummFix is an independent utility. It is not affiliated with Alesis or Apple.
 
-## Сборка из исходников
+## Build from source
 
-Нужны macOS 14+, Apple Command Line Tools и Swift 6. Полный Xcode не обязателен.
+Requires macOS 14 or later, Apple Command Line Tools, and Swift 6. Full Xcode is not required.
 
 ```sh
 git clone https://github.com/nowmdr/drummfix.git
@@ -50,13 +50,13 @@ cd drummfix
 zsh scripts/build-app.sh
 ```
 
-Готовое приложение: `dist/DrummFix.app`. Его можно перенести в `Applications`. Для создания `.dmg`:
+The result is `dist/DrummFix.app`. You can copy it into Applications. To make a `.dmg`:
 
 ```sh
 zsh scripts/package-dmg.sh
 ```
 
-Проверки преобразования MIDI:
+Run the MIDI checks:
 
 ```sh
 swift build
@@ -64,12 +64,12 @@ swift build
 .build/debug/DrummFixProbe --test-loopback
 ```
 
-## Помощь
+## Help and privacy
 
-Если что-то не работает, откройте [GitHub Issue](https://github.com/nowmdr/drummfix/issues), указав модель барабанов, версии macOS/GarageBand, действия для повторения ошибки и ожидаемый/фактический результат. Перед публикацией журнала из DrummFix просмотрите его содержимое.
+If something fails, [open a GitHub issue](https://github.com/nowmdr/drummfix/issues) with your drum-kit model, macOS and GarageBand versions, steps to reproduce, and what you expected versus what happened. Review any saved diagnostic log before sharing it publicly.
 
-Проверки текущей версии описаны в [документе](docs/VERIFICATION.md). Приложение не отправляет MIDI-события и журнал в интернет.
+The app processes MIDI locally and never uploads your MIDI events or diagnostic log. [Verification notes](docs/VERIFICATION.md) describe what has and has not been tested.
 
-## Лицензия
+## License
 
-Исходный код распространяется по [MIT License](LICENSE). DrummFix — независимый проект.
+The source code is available under the [MIT License](LICENSE).

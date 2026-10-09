@@ -1,67 +1,48 @@
-# Руководство DrummFix
+# DrummFix user guide
 
-Небольшое приложение для Alesis Turbo Mesh и GarageBand. При нажатой педали преобразует удары хай-хэта из MIDI-ноты 46 в 42. По умолчанию сохраняет исходную силу удара; отдельный звук педали и остальные пэды не меняет.
+DrummFix converts a hi-hat pad hit from MIDI note 46 to 42 when the Alesis Turbo Mesh pedal reports a closed position. Pedal-only sounds and all other pads remain unchanged. The **Original** dynamics mode preserves the incoming hit velocity; **Moderate** and **Strong** raise softer closed-hi-hat velocities only. Your choice is saved.
 
-Для закрытого хай-хэта есть отдельная настройка динамики. «Исходная» передаёт силу удара без изменения; «Умеренная» и «Сильная» повышают чувствительность тихих ударов, не меняя открытый хай-хэт и остальные барабаны. Выбранное значение сохраняется.
+## Start playing
 
-## Запуск
+1. Power on the Alesis Turbo Mesh and connect it to your Mac via USB.
+2. Save your project and quit GarageBand completely with `⌘Q`.
+3. Open DrummFix from Applications, select Alesis Turbo, and click **Enable fix**.
+4. Click **Open GarageBand**. Select a Software Instrument → Drum Kit track, such as Sunset or Smash.
+5. Keep DrummFix open during play and recording.
 
-1. Включите Alesis Turbo и подключите его к Mac по USB.
-2. Сохраните проект GarageBand и полностью закройте GarageBand через ⌘Q.
-3. Откройте `DrummFix.app` из папки «Программы». Выберите Alesis Turbo и нажмите «Включить исправление».
-4. Нажмите «Открыть GarageBand». Выберите дорожку Software Instrument → Drum Kit и нужный набор, например Sunset или Smash.
-5. Играйте. Держите DrummFix открытым во время игры и записи.
+GarageBand's **Input Device** setting is for audio, so you do not need to change it. You also do not need to change **MIDI Controller**.
 
-Пункт Input Device в GarageBand относится к аудио. Настраивать его для DrummFix не нужно. MIDI Controller в GarageBand также менять не нужно.
+## One-minute check
 
-## Первая проверка (около минуты)
+- With the pedal released, hit the hi-hat pad three times. It should sound open.
+- Hold the pedal down and hit the pad five times. It should sound closed; **Corrected hits** should increase by five.
+- Release the pedal and hit the pad again. It should sound open.
+- Press the pedal without hitting the pad. Its short closing sound should remain normal.
+- Expand **Diagnostics and tests**, click **Silence test**, and hit a few pads. GarageBand should be silent. Click **Restore sound** when finished.
+- Record a short passage in GarageBand and play it back to confirm the closed hits were recorded.
 
-- При отпущенной педали сделайте 3 удара: открытый хай-хэт.
-- При зажатой педали сделайте 5 ударов: закрытый хай-хэт; счётчик «Исправлено ударов» должен увеличиться на 5.
-- Если тихий и сильный закрытые удары звучат одинаково, сначала сравните кнопки «Тихо (20)» и «Сильно (110)» в диагностике. Если они различаются, попробуйте «Умеренная», затем «Сильная» в настройке динамики. Режим переключается во время игры. Если контрольные звуки одинаковы, выбранный набор GarageBand может слабо реагировать на силу этой ноты; попробуйте другой Drum Kit.
-- Отпустите педаль и ударьте снова: открытый хай-хэт.
-- Нажмите педаль без удара: короткое закрытие должно остаться таким же, как раньше.
-- В DrummFix раскройте «Диагностика и проверка», нажмите «Проверка тишины» и ударьте по нескольким пэдам. В GarageBand не должно звучать ничего. Затем обязательно нажмите «Вернуть звук».
-- Запишите короткий фрагмент в GarageBand и прослушайте его: закрытые удары должны сохраниться в записи.
+If you still hear drums during Silence test, GarageBand may be receiving the original MIDI input as well. Quit GarageBand, keep DrummFix enabled, reopen GarageBand, and test again. Listen to the Mac's audio output rather than the Alesis module.
 
-Если при проверке тишины что-то слышно, GarageBand всё ещё принимает другой поток. Завершите GarageBand, оставьте DrummFix включённым, откройте GarageBand заново и повторите. Слушайте выход Mac, не звук модуля Alesis.
+## Dynamics and diagnostics
 
-## Окно и диагностика
+The pedal indicator shows the last state received from the kit. The Turbo Mesh may send its release state only with the next pad hit, so the indicator can briefly remain **Closed** after your foot leaves the pedal.
 
-Индикатор педали показывает последнее полученное состояние. Turbo передаёт отпускание перед следующим ударом, поэтому индикатор может оставаться «Закрыт» после отпускания до нового удара. Это ожидаемо.
+The **Open**, **Closed**, and **Pedal** test buttons send notes 46, 42, and 44 to GarageBand. **Soft (20)** and **Hard (110)** send closed note 42 at different velocities, without applying DrummFix's dynamics curve. If those two buttons sound alike, try another GarageBand Drum Kit; some kits may respond less noticeably to this note's velocity. If they differ, compare Original, Moderate, and Strong while playing.
 
-Кнопки «Открытый», «Закрытый», «Педаль» в диагностике отправляют тестовые ноты 46, 42 и 44 в GarageBand без игры на барабанах. Они нужны для сравнения выбранных звуков.
+**Save log…** exports the latest 240 MIDI events, input/output notes, and processing statistics. The processing time shown in the window excludes GarageBand and audio-output latency. DrummFix does not upload the log.
 
-Кнопки «Тихо (20)» и «Сильно (110)» отправляют одну и ту же закрытую ноту 42 с разной MIDI-силой. Усиление динамики на эти кнопки не влияет: так можно проверить сам набор GarageBand. В журнале при преобразовании показаны входная и выходная сила удара.
+## Stop, unplug, and recover
 
-«Сохранить журнал…» сохраняет последние 240 MIDI-событий, входящие/исходящие ноты и статистику обработки. Время обработки в окне не включает задержку звука GarageBand или наушников. Приложение работает локально и не отправляет журнал в сеть.
+Click **Turn off** or close the window to stop the fix and restore visibility of the original MIDI input. Restart GarageBand if you want to play directly through the kit after stopping DrummFix.
 
-## Остановка, USB и сон
+After USB disconnection or Mac sleep, DrummFix waits for the kit. Quit GarageBand before resuming. When the Alesis kit is available, DrummFix restores the route automatically; reopen GarageBand afterward. This prevents GarageBand from attaching to the unmodified input during reconnection.
 
-«Выключить» или закрытие окна завершает исправление и возвращает видимость исходного MIDI-порта. Для игры напрямую после остановки перезапустите GarageBand.
+DrummFix temporarily hides only the selected original MIDI source so GarageBand does not receive both raw and corrected hits. A separate DrummFixGuard process restores that source if the main app crashes. Before modifying the source, DrummFix saves its prior state in `~/Library/Application Support/DrummFix/recovery.json`. If the kit was absent during recovery, reconnect it and restart DrummFix. Do not manually delete `recovery.json` before recovery completes.
 
-После отключения USB или сна приложение ожидает устройство. Для безопасного возобновления закройте GarageBand: когда Alesis доступен, DrummFix восстановит маршрут автоматически. Затем снова откройте GarageBand. Это исключает подключение GarageBand к сырому порту в момент переподключения.
+## Build and test
 
-## Восстановление
+Apple Command Line Tools, Swift 6, and macOS 14 or later are required. Run `zsh scripts/build-app.sh` from the repository root. The result is `dist/DrummFix.app`; it is ad-hoc signed and not notarized.
 
-DrummFix временно скрывает только выбранный исходный MIDI-порт, чтобы GarageBand не слышал одновременно исходные и исправленные удары. Отдельный процесс DrummFixGuard восстанавливает порт при аварийном завершении, в том числе при принудительной остановке процесса.
+Run `swift build`, `.build/debug/DrummFixTests`, and `.build/debug/DrummFixProbe --test-loopback` for source-level checks. The loopback check uses a temporary virtual MIDI source; it does not play sound through the physical drums.
 
-До изменения порта приложение сохраняет его прежнее состояние в `~/Library/Application Support/DrummFix/recovery.json`. Если устройство отсутствовало при восстановлении, подключите его и перезапустите DrummFix: восстановление будет завершено. Если был завершён и основной процесс, и процесс восстановления, этот же перезапуск восстановит порт. Не удаляйте recovery.json вручную до восстановления.
-
-## Сборка из исходников
-
-Требуются Apple Command Line Tools, Swift 6 и macOS 14 или новее. Полный Xcode не обязателен.
-
-    zsh scripts/build-app.sh
-
-Результат: `dist/DrummFix.app`. Сборка подписана локальной ad-hoc подписью, предназначена для этого Mac и не является нотарифицированным дистрибутивом для других пользователей.
-
-Проверки без зависимостей от XCTest:
-
-    swift build
-    .build/debug/DrummFixTests
-    .build/debug/DrummFixProbe --test-loopback
-
-Тест loopback использует собственный временный MIDI-источник, не проигрывает звук через физические барабаны и удаляет его после проверки. Фактические результаты проверок — в `docs/VERIFICATION.md`.
-
-Вернуться к [странице проекта](../README.md).
+Back to the [project page](../README.md).

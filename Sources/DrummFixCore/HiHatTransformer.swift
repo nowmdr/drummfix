@@ -1,9 +1,9 @@
 import Foundation
 
 public enum PedalState: String, Equatable {
-    case unknown = "Ещё нет данных"
-    case open = "Открыт"
-    case closed = "Закрыт"
+    case unknown = "No data yet"
+    case open = "Open"
+    case closed = "Closed"
 }
 
 public enum HiHatDynamics: Int, CaseIterable, Identifiable {
@@ -14,9 +14,9 @@ public enum HiHatDynamics: Int, CaseIterable, Identifiable {
     public var id: Int { rawValue }
     public var title: String {
         switch self {
-        case .original: return "Исходная"
-        case .moderate: return "Умеренная"
-        case .strong: return "Сильная"
+        case .original: return "Original"
+        case .moderate: return "Moderate"
+        case .strong: return "Strong"
         }
     }
 
@@ -45,8 +45,8 @@ public struct MIDITrace: Identifiable {
         switch status & 0xF0 {
         case 0xB0: return "CH\(channel)  CC\(note) = \(value)"
         case 0x90 where value > 0:
-            return "CH\(channel)  удар \(note)\(note == outputNote ? "" : " → \(outputNote)")  сила \(value)\(value == outputValue ? "" : " → \(outputValue)")"
-        case 0x80, 0x90: return "CH\(channel)  конец \(note)\(note == outputNote ? "" : " → \(outputNote)")"
+            return "CH\(channel)  hit \(note)\(note == outputNote ? "" : " → \(outputNote)")  velocity \(value)\(value == outputValue ? "" : " → \(outputValue)")"
+        case 0x80, 0x90: return "CH\(channel)  off \(note)\(note == outputNote ? "" : " → \(outputNote)")"
         case 0xA0: return "CH\(channel)  Aftertouch \(note) = \(value)"
         default: return String(format: "%08X → %08X", input, output)
         }
