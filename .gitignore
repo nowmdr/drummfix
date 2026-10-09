@@ -1,0 +1,8 @@
+.build/
+dist/
+.DS_Store
+*.band/
+PLAN.md
+docs/DRUM_TRAINER_MVP.md
+docs/DISTRIBUTION_PLAN.md
+assets/icon-reference.png
