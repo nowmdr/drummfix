@@ -32,6 +32,8 @@ Quick check: an open pedal should produce an open hi-hat; a held-down pedal plus
 
 For diagnostics, USB reconnection, and restoring the original MIDI route, see the [user guide](docs/USER_GUIDE.md).
 
+If GarageBand tries to use an iPhone microphone, open **GarageBand → Settings → Audio/MIDI** and choose your Mac's built-in microphone under **Input Device**. DrummFix uses MIDI, not microphone audio, and does not change GarageBand's audio input. [Apple's GarageBand troubleshooting guide](https://support.apple.com/en-gb/102247) describes this input setting.
+
 ## Compatibility
 
 - Tested with Alesis Turbo Mesh over USB on a MacBook Pro M1 Pro, macOS 26.6.2, and GarageBand 10.4.14.

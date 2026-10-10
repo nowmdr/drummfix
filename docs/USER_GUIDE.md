@@ -10,7 +10,9 @@ DrummFix converts a hi-hat pad hit from MIDI note 46 to 42 when the Alesis Turbo
 4. Click **Open GarageBand**. Select a Software Instrument → Drum Kit track, such as Sunset or Smash.
 5. Keep DrummFix open during play and recording.
 
-GarageBand's **Input Device** setting is for audio, so you do not need to change it. You also do not need to change **MIDI Controller**.
+GarageBand's **Input Device** setting is for audio, while DrummFix sends MIDI. You do not need to change **MIDI Controller**.
+
+If GarageBand tries to connect to an iPhone microphone, open **GarageBand → Settings → Audio/MIDI** and explicitly select the available built-in Mac microphone in **Input Device** (for example, **MacBook Pro Microphone**). If the menu contains both a parenthesized and a plain entry for the same microphone, choose the plain entry. Check **System Settings → Sound → Input** if the Mac's system default input is also set to iPhone. DrummFix does not select or request any microphone. See [Apple's GarageBand guidance](https://support.apple.com/en-gb/102247) and [Apple's Continuity Camera microphone guidance](https://support.apple.com/en-gb/102546).
 
 ## One-minute check
 

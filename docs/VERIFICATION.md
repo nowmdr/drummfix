@@ -13,3 +13,5 @@ The following checks passed for the 0.2.1 MIDI implementation:
 Version 0.2.2 changes English UI strings and public documentation; the MIDI transformation itself is unchanged. Its build, automated MIDI checks, disk-image integrity, and local app launch were verified on the same Mac.
 
 Still to test on separate hardware: clean installation and Gatekeeper flow; macOS 14; USB unplug/replug and sleep/wake with GarageBand; Intel support; other kits and DAWs. A passing loopback test does not establish those behaviors.
+
+On 10 October 2026, GarageBand's saved **Input Device** was a parenthesized “(MacBook Pro Microphone)” entry, distinct from the plain **MacBook Pro Microphone** entry. The Mac's system default input was also the built-in microphone. The plain entry was explicitly selected in GarageBand → Settings → Audio/MIDI. After quitting and reopening GarageBand from an active DrummFix session, the setting still displayed **MacBook Pro Microphone** without parentheses. The iPhone-side connection prompt was not directly observable in this verification. DrummFix only opens GarageBand via `NSWorkspace` and does not access Core Audio input settings.
